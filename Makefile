@@ -1,6 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -pedantic
 
-pa01: *.c
-	$(CC) $(CFLAGS) *.c -o pa01
+PA01: *.c
+	$(CC) $(CFLAGS) *.c -o PA01
 
+clean:
+	$(RM) PA01
