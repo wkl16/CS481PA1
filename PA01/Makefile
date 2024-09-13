@@ -1,8 +1,18 @@
-CC = gcc
-CFLAGS = -Wall -pedantic
+CC=gcc
+CFLAGS=-Wall -pedantic
+SRCS=$(shell find . -name '*.c')
+BINS=$(patsubst %.c,%,$(SRCS))
+DIR=$(shell basename $(CURDIR))
 
-PA01: *.c
-	$(CC) $(CFLAGS) *.c -o PA01
+all: $(BINS)
+
+$(GITIGNORE): FORCE
+	$(shell echo $(patsubst ./%,$(DIR)/%,$(BINS)) | sed -e 's/ /\n/g' >> $@)
+
+% : %.c
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	$(RM) PA01
+	$(RM) $(BINS)
+
+FORCE:
