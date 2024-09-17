@@ -3,9 +3,17 @@
 #include <unistd.h>
 #include <wait.h>
 
-int fib_fork(int x) {
-    if (x == 0) return 0;
-    if (x == 1) return 1;
+int fib_seq(int x);
+
+int fib_fork(int n, int m) {
+    // Base Cases
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+
+    // Use fib_seq if enough computing resources
+    if ((n-1) <= m && (n-2) <= m) {
+        return fib_seq(n);
+    }
 
 
     int pipe1[2];
@@ -52,7 +60,7 @@ int fib_fork(int x) {
         } else if (pid2 == 0) {
             // Child
             close(pipe2[0]); // Close the read end of pipe
-            int rec2 = fib_fork(x-2);
+            int rec2 = fib_fork(n-2, m);
             write(pipe2[1], &rec2, sizeof(int));
             close(pipe2[1]); // Close the write end of pipe
             exit(EXIT_SUCCESS);
@@ -66,7 +74,7 @@ int fib_fork(int x) {
     } else if (pid1 == 0) {
         // Child
         close(pipe1[0]); // Close the read end of pipe
-        int rec1 = fib_fork(x-1);
+        int rec1 = fib_fork(n-1, m);
         write(pipe1[1], &rec1, sizeof(int));
         close(pipe1[1]); // Close the write end of pipe
         exit(EXIT_SUCCESS);
@@ -146,14 +154,6 @@ int main(int argc, char ** argv) {
 
     printf("n = %d, m = %d\n", n, m);
 
-    int result;
-    if ((n-1) > m || (n-2) > m) {
-        printf("Using fork\n");
-        result = fib_fork(n);
-    } else {
-        printf("Using seq\n");
-        result = fib_seq(n);
-    }
-
+    int result = fib_fork(n, m);
     printf("%d\n", result);
 }
