@@ -9,31 +9,31 @@ pid_t pid;
 bool running = true;
 
 
-void handle_sigint(int sig) {
-    if (sig == SIGINT) {
-        printf("\n");
-        printf("ctrl-c caught\n");
-        printf("terminating the child process\n");
-        kill(pid, SIGKILL);
-        wait(0);
-        printf("child process terminated\n");
-        printf("terminating the parent process\n");
-        exit(EXIT_SUCCESS);
-    } else if (sig == SIGTSTP) {
-        printf("\n");
-        printf("ctrl-z caught\n");
-        if (running) {
-            printf("the child process is currently running => stopping the child process.\n");
-            kill(pid, SIGTSTP);
-            printf("the child process is now suspended\n");
-        } else {
-            printf("the child process is currently stopped => resuming the child process.\n");
-            kill(pid, SIGCONT);
-            printf("the child process is now running\n");
-        }
+void handle_sigint() {
+    printf("\n");
+    printf("ctrl-c caught\n");
+    printf("terminating the child process\n");
+    kill(pid, SIGKILL);
+    wait(0);
+    printf("child process terminated\n");
+    printf("terminating the parent process\n");
+    exit(EXIT_SUCCESS);
+}
 
-        running = !running;
+void handle_sigtstp() {
+    printf("\n");
+    printf("ctrl-z caught\n");
+    if (running) {
+        printf("the child process is currently running => stopping the child process.\n");
+        kill(pid, SIGTSTP);
+        printf("the child process is now suspended\n");
+    } else {
+        printf("the child process is currently stopped => resuming the child process.\n");
+        kill(pid, SIGCONT);
+        printf("the child process is now running\n");
     }
+
+    running = !running;
 }
 
 int main(void) {
@@ -41,12 +41,17 @@ int main(void) {
     if (pid > 0) {
         // Parent
         // Register SIGINT handler
-        struct sigaction action;
-        action.sa_handler = handle_sigint;
-        sigemptyset(&action.sa_mask);
-        action.sa_flags = 0;
-        sigaction(SIGINT, &action, 0);
-        sigaction(SIGTSTP, &action, 0);
+        struct sigaction action_int;
+        action_int.sa_handler = handle_sigint;
+        sigemptyset(&action_int.sa_mask);
+        action_int.sa_flags = 0;
+        sigaction(SIGINT, &action_int, 0);
+
+        struct sigaction action_tstp;
+        action_tstp.sa_handler = handle_sigtstp;
+        sigemptyset(&action_tstp.sa_mask);
+        action_tstp.sa_flags = 0;
+        sigaction(SIGTSTP, &action_tstp, 0);
 
         while (true) ; // Infinite loop
     } else if (pid == 0) {
