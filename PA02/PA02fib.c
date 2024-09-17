@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <wait.h>
 
 int fib_seq(int x) {
   int i, rint = (rand() % 30);
