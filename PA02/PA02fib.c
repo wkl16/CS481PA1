@@ -21,60 +21,29 @@ int fib_fork(int n, int m) {
         fprintf(stderr, "Failed to create pipe\n");
         exit(EXIT_FAILURE);
     }
-    pid_t pid1 = fork();
-    if (pid1 > 0) {
+    pid_t pid = fork();
+    if (pid > 0) {
         // Parent
         close(pipe1[1]); // Close the write end of pipe
-        int pipe2[2];
-        if (pipe(pipe2) != 0) {
-            fprintf(stderr, "Failed to create pipe\n");
-            exit(EXIT_FAILURE);
-        }
-        pid_t pid2 = fork();
-        if (pid2 > 0) {
-            // Parent
-            close(pipe2[1]); // Close the write end of pipe
-            int r1, r2;
-            read(pipe1[0], &r1, sizeof(int)); 
-            read(pipe2[0], &r2, sizeof(int)); 
-            close(pipe1[0]); // Close the read end of pipe
-            close(pipe2[0]); // Close the read end of pipe
-            
-            int stat1, stat2;
-            waitpid(pid1, &stat1, 0);
-            waitpid(pid2, &stat2, 0);
+        int r1, r2;
+        r1 = fib_fork(n-1, m);
+        read(pipe1[0], &r2, sizeof(int)); 
+        close(pipe1[0]); // Close the read end of pipe
+        
+        int stat1; 
+        waitpid(pid, &stat1, 0);
 
-            if (WIFEXITED(stat1)) {
-                if (WEXITSTATUS(stat1) != EXIT_SUCCESS) {
-                    exit(EXIT_FAILURE);
-                }
+        if (WIFEXITED(stat1)) {
+            if (WEXITSTATUS(stat1) != EXIT_SUCCESS) {
+                exit(EXIT_FAILURE);
             }
-
-            if (WIFEXITED(stat2)) {
-                if (WEXITSTATUS(stat2) != EXIT_SUCCESS) {
-                    exit(EXIT_FAILURE);
-                }
-            }
-
-            return r1 + r2;
-        } else if (pid2 == 0) {
-            // Child
-            close(pipe2[0]); // Close the read end of pipe
-            int rec2 = fib_fork(n-2, m);
-            write(pipe2[1], &rec2, sizeof(int));
-            close(pipe2[1]); // Close the write end of pipe
-            exit(EXIT_SUCCESS);
-        } else {
-            // Error
-            fprintf(stderr, "Failed to fork (inner).\n");
-            kill(pid1, SIGKILL);
-            waitpid(pid1, NULL, 0);
-            exit(EXIT_FAILURE);
         }
-    } else if (pid1 == 0) {
+
+        return r1 + r2;
+    } else if (pid == 0) {
         // Child
         close(pipe1[0]); // Close the read end of pipe
-        int rec1 = fib_fork(n-1, m);
+        int rec1 = fib_fork(n-2, m);
         write(pipe1[1], &rec1, sizeof(int));
         close(pipe1[1]); // Close the write end of pipe
         exit(EXIT_SUCCESS);
