@@ -49,7 +49,7 @@ int fib_fork(int n, int m) {
         exit(EXIT_SUCCESS);
     } else {
         // Error
-        fprintf(stderr, "Failed to fork (outer).\n");
+        fprintf(stderr, "Failed to fork.\n");
         exit(EXIT_FAILURE);
     }
 }
