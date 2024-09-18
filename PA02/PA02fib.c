@@ -152,8 +152,6 @@ int main(int argc, char ** argv) {
         exit(EXIT_FAILURE);
     }
 
-    printf("n = %d, m = %d\n", n, m);
-
     int result = fib_fork(n, m);
     printf("%d\n", result);
 }
