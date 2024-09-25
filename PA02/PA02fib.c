@@ -119,7 +119,7 @@ int main(int argc, char ** argv) {
                 break;
             case 'S':
                 m = atoi(optarg);
-                if (m <= 0) {
+                if (m < 0) {
                     fprintf(stderr, "Invalid argument for option -S: %s.\n", optarg);
                     exit(EXIT_FAILURE);
                 }
@@ -143,11 +143,11 @@ int main(int argc, char ** argv) {
         printf("Non-option argument %s.\n", argv[i]);
     }
 
-    if (n <= 0) {
+    if (n < 0) {
         fprintf(stderr, "-F is a required.\n");
         exit(EXIT_FAILURE);
     }
-    if (m <= 0) {
+    if (m < 0) {
         fprintf(stderr, "-S is a required.\n");
         exit(EXIT_FAILURE);
     }
