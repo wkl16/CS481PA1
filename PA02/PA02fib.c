@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -105,6 +104,8 @@ int main(int argc, char ** argv) {
 
             default:
                 exit(EXIT_FAILURE);
+        }
+    }
 
   for (int i = optind; i < argc; i++) {
     printf("Non-option argument %s.\n", argv[i]);
