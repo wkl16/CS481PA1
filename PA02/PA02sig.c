@@ -10,10 +10,10 @@ bool child_running = true;
 
 // signal handler for SIGINT (Ctrl+C)
 void handle_sigint() {
-  if (child_pid > 0) {
-    printf("\nSIGINT caught, stopping child process %d...\n", child_pid);
-    kill(child_pid, SIGKILL);
-  }
+  printf("\nSIGINT caught, stopping child process %d...\n", child_pid);
+  kill(child_pid, SIGKILL);
+  wait(0);
+  printf("child process killed, terminating parent process...\n");
   exit(EXIT_SUCCESS);
 }
 
