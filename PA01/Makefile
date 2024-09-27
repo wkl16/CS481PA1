@@ -3,13 +3,15 @@ CFLAGS=-Wall -pedantic
 SRCS=$(shell find . -name '*.c')
 BINS=$(patsubst %.c,%,$(SRCS))
 DIR=$(shell basename $(CURDIR))
+GITIGNORE=.gitignore
+RM=rm -f
 
 all: $(BINS)
 
 $(GITIGNORE): FORCE
 	$(shell echo $(patsubst ./%,$(DIR)/%,$(BINS)) | sed -e 's/ /\n/g' >> $@)
 
-% : %.c
+%: %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -105,22 +106,21 @@ int main(int argc, char ** argv) {
             default:
                 exit(EXIT_FAILURE);
 
-        }
-    }
+  for (int i = optind; i < argc; i++) {
+    printf("Non-option argument %s.\n", argv[i]);
+  }
 
-    for (int i = optind; i < argc; i++) {
-        printf("Non-option argument %s.\n", argv[i]);
-    }
+  if (n <= 0) {
+    fprintf(stderr, "-F is a required.\n");
+    exit(EXIT_FAILURE);
+  }
+  if (m <= 0) {
+    fprintf(stderr, "-S is a required.\n");
+    exit(EXIT_FAILURE);
+  }
 
-    if (n < 0) {
-        fprintf(stderr, "-F is a required.\n");
-        exit(EXIT_FAILURE);
-    }
-    if (m < 0) {
-        fprintf(stderr, "-S is a required.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    int result = fib_fork(n, m);
-    printf("%d\n", result);
+  int result = fib_fork(n, m);
+  printf("%d\n", result);
+            
+  return 0;
 }
