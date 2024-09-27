@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -pedantic
+CFLAGS=-Wall -pedantic -O0
 SRCS=$(shell find . -name '*.c')
 BINS=$(patsubst %.c,%,$(SRCS))
 DIR=$(shell basename $(CURDIR))
